@@ -1,0 +1,61 @@
+﻿@model IEnumerable<Assignment2.Models.Product>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>List of Products</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ProductName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ProductDescription)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ProductPrice)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ProductName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ProductDescription)
+            </td>
+            <td>
+                $@Html.DisplayFor(modelItem => item.ProductPrice)
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+<div>
+    <a asp-action="Add">Add</a> | <a asp-action="Update">Update</a> | <a asp-action="Delete">Delete</a> | <a asp-action="Search">Search</a>
+</div>
+<script>
+    // Make an AJAX request to fetch the new product data
+    $.ajax({
+        url: '/api/products',
+        method: 'GET',
+        dataType: 'json',
+        success: function (data) {
+            // Update the HTML of the product list on the index page
+            var productList = document.getElementById('product-list');
+            productList.innerHTML = ''; // Clear the current list
+            data.forEach(function (product) {
+                productList.innerHTML += '<li>' + product.name + '</li>'; // Add each product to the list
+            });
+        },
+        error: function (xhr, textStatus, errorThrown) {
+            console.error('Error fetching new product data: ' + errorThrown);
+        }
+    });
+</script>

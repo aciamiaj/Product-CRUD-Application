@@ -1,0 +1,61 @@
+﻿@model Assignment2.Models.Product
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h1>Delete Product</h1>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Delete" id="deleteForm" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="ProductId" class="control-label"></label>
+                <select asp-for="ProductId" asp-items="@ViewBag.ProductIds" onchange="getProductDetails(this)">
+                    <option>Please select a product</option>
+                </select>
+                <span asp-validation-for="ProductId" class="text-danger"></span>
+            </div><br />
+            <div class="form-group">
+                <label asp-for="ProductName" class="control-label"></label>
+                <input asp-for="ProductName" class="form-control" id="productName" readonly />
+                <span asp-validation-for="ProductName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ProductDescription" class="control-label"></label>
+                <input asp-for="ProductDescription" class="form-control" id="productDescription" readonly />
+                <span asp-validation-for="ProductDescription" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ProductPrice" class="control-label"></label>
+                <input asp-for="ProductPrice" class="form-control" id="productPrice" readonly />
+                <span asp-validation-for="ProductPrice" class="text-danger"></span>
+            </div><br />
+            <div class="form-group">
+                <input type="hidden" asp-for="ProductId" />
+                <input type="submit" value="Delete" class="btn btn-danger" /> |
+                <a asp-controller="Product" asp-action="Index">Back to List</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        function getProductDetails(select) {
+            var productId = $(select).val();
+            $.ajax({
+                url: "/Product/GetProductDetails?productId=" + productId,
+                type: "GET",
+                success: function (result) {
+                    $("#productName").val(result.productName);
+                    $("#productDescription").val(result.productDescription);
+                    $("#productPrice").val(result.productPrice);
+                },
+                error: function (errormessage) {
+                    alert(errormessage.responseText);
+                }
+            });
+        }
+    </script>
+}

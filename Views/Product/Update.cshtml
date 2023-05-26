@@ -1,0 +1,99 @@
+﻿
+@model Assignment2.Models.Product
+@{
+    ViewData["Title"] = "Update";
+}
+
+<h1>Update Product</h1>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Update" id="updateForm" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="ProductId" class="control-label"></label>
+                <select asp-for="ProductId" asp-items="@ViewBag.ProductIds" onchange="getProductDetails()">
+                    <option value="">  </option>
+                </select>
+                <span asp-validation-for="ProductId" class="text-danger"></span>
+            </div><br />
+            <div class="form-group">
+                <label asp-for="ProductName" class="control-label"></label>
+                <input asp-for="ProductName" class="form-control" id="productName" />
+                <span asp-validation-for="ProductName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ProductDescription" class="control-label"></label>
+                <input asp-for="ProductDescription" class="form-control" id="productDescription" />
+                <span asp-validation-for="ProductDescription" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ProductPrice" class="control-label"></label>
+                <input asp-for="ProductPrice" class="form-control" id="productPrice" />
+                <span asp-validation-for="ProductPrice" class="text-danger"></span>
+            </div><br/>
+            <div class="form-group">
+                <input type="submit" value="Update" class="btn btn-primary" id="updateButton" /> | <a asp-action="Index">Back to List</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        function getProductDetails() {
+            var productId = $('#ProductId').val();
+            if (productId) {
+                $.ajax({
+                    url: '/Product/GetProductDetails',
+                    type: 'GET',
+                    data: { productId: productId },
+                    success: function (result) {
+                        $('#productName').val(result.productName);
+                        $('#productDescription').val(result.productDescription);
+                        $('#productPrice').val(result.productPrice);
+                    },
+                    error: function () {
+                        alert('Error retrieving product details.');
+                    }
+                });
+            } else {
+                $('#productName').val('');
+                $('#productDescription').val('');
+                $('#productPrice').val('');
+            }
+        }
+
+        $('#updateForm').submit(function (event) {
+            event.preventDefault(); // prevent the form from submitting normally
+
+            // get the values of the form fields
+            var productId = $('#ProductId').val();
+            var productName = $('#productName').val();
+            var productDescription = $('#productDescription').val();
+            var productPrice = $('#productPrice').val();
+
+            // call to update the product
+            $.ajax({
+                url: '/Product/Update',
+                type: 'POST',
+                data: {
+                    productId: productId,
+                    productName: productName,
+                    productDescription: productDescription,
+                    productPrice: productPrice
+                },
+                success: function (result) {
+                    // update the UI or redirect to another page
+                },
+                error: function () {
+                    alert('Error updating product details.');
+                }
+            });
+        });
+
+    </script>
+}
